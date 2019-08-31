@@ -1,0 +1,74 @@
+{
+    "users": [
+    {
+        "username": "super",
+        "password": "john",
+        "email": "superadmin@com.au",
+        "rule": 3,
+        "id": 0
+    },
+    {
+        "username": "groupadmin1",
+        "password": "john",
+        "email": "groupadmin@com.au",
+        "rule": 2,
+        "id": 1
+    },
+    {
+        "username": "groupassis1",
+        "password": "john",
+        "email": "groupassis@com.au",
+        "rule": 1,
+        "id": 2
+    },
+    {
+        "username": "member1",
+        "password": "john",
+        "email": "123@com.au",
+        "rule": 0,
+        "id": 3
+    },
+    {
+        "username": "member2",
+        "password": "john",
+        "email": "123@com.au",
+        "rule": 0,
+        "id": 4
+    },
+    {
+        "username": "member3",
+        "password": "john",
+        "email": "123@com.au",
+        "rule": 0,
+        "id": 5
+    },
+    {
+        "username": "member4",
+        "password": "john",
+        "email": "123@com.au",
+        "rule": 0,
+        "id": 6
+    }],
+    "groups": [
+    {
+        "name": "1",
+        "admins": [],
+        "members": []
+    },
+    {
+        "name": "2",
+        "admins": [],
+        "members": []
+    }],
+    "channels": [
+    {
+        "name": "1",
+        "group": "1",
+        "members": ["member2", "member3"]
+    },
+    {
+        "name": "2",
+        "group": "2",
+        "members": ["member4"]
+    }]
+}

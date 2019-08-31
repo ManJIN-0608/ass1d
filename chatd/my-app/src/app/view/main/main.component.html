@@ -1,0 +1,198 @@
+<div style="width: 80%;margin: 0 auto">
+
+    <div style="text-align: right">
+        <ul nz-menu nzMode="horizontal">
+            <li nz-submenu [nzTitle]="loginName" nzIcon="windows" style="margin-right: 6%;">
+                <ul>
+                    <li nz-menu-item (click)="logout()">Log out</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <nz-table #basicTable [nzData]="listOfData">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Rule</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>{{data.email}}</td>
+                <td>{{data.username}}</td>
+                <td>{{ showRule(data.rule) }}</td>
+                <td>
+                    <a (click)="info(data)">Information</a>
+                    <span *ngIf="isAdmin || isGroup || isChatAdmin">
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="edit(data)">Edit</a>
+                    </span>
+                    <span *ngIf="isAdmin  || isGroup || isChatAdmin">
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a nz-popconfirm nzTitle="delete?" (nzOnConfirm)="deleteRow(data.id)">Delete</a>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+    <nz-modal [(nzVisible)]="showType" [nzTitle]="modaltitle" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+        <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+            <nz-form-item>
+                <nz-input-group>
+                    <nz-form-label [nzSpan]="6" nzFor="email">E-mail</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        <span *ngIf="isVisible === 1">{{ infoObj.email }}</span>
+                        <input *ngIf="isVisible === 2" nz-input name="email" type="email" id="email"
+                            formControlName="email">
+                    </nz-form-control>
+                </nz-input-group>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-input-group>
+                    <nz-form-label [nzSpan]="6" nzFor="username">username</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        <span *ngIf="isVisible === 1">{{ infoObj.username }}</span>
+                        <input *ngIf="isVisible === 2" nz-input name="username" type="username" id="username"
+                            formControlName="username">
+                    </nz-form-control>
+                </nz-input-group>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-input-group>
+                    <nz-form-label [nzSpan]="6" nzFor="rule">rule</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        <span *ngIf="isVisible === 1">{{ showRule(infoObj.rule) }}</span>
+
+                        <nz-select *ngIf="isVisible === 2" formControlName="rule" nzPlaceHolder="请选择">
+                            <nz-option [nzValue]="0" nzLabel="user"></nz-option>
+                            <nz-option [nzValue]="1" nzLabel="groupadmin"></nz-option>
+                            <nz-option [nzValue]="2" nzLabel="superadmin"></nz-option>
+                        </nz-select>
+
+                    </nz-form-control>
+                </nz-input-group>
+            </nz-form-item>
+        </form>
+    </nz-modal>
+</div>
+
+
+<div style="width: 80%;margin: 0 auto">
+    <div class="row" style="width: 100%">
+        <!-- Groups -->
+        <div style="padding:0px">
+
+            <!-- Groups Section -->
+            <div class="card mb-3">
+                <h3 class="card-header">Groups</h3>
+                <div class="card-body" style="height: 300px; overflow-y:hidden">
+
+                    <!-- New Group Form -->
+                    <div class="form-inline">
+
+                        <form *ngIf="isAdmin || isGroup || isChatAdmin" nz-form [nzLayout]="'inline'"
+                            [formGroup]="groupsForm" (ngSubmit)="submitgroups()">
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip="Please input your New Group!">
+                                    <nz-input-group nzPrefixIcon="user">
+                                        <input formControlName="newGroupName" nz-input placeholder="New Group" />
+                                    </nz-input-group>
+                                </nz-form-control>
+                            </nz-form-item>
+
+                            <nz-form-item>
+                                <nz-form-control>
+                                    <button nz-button nzType="primary">Create</button>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </form>
+                    </div>
+
+                    <!-- List of Groups -->
+                    <div class="row" *ngFor="let group of groups">
+                        <button type="button" *ngIf="group.role == 0" class="btn btn-outline-success col-lg-12"
+                            (click)="openGroup(group.name)"> {{ group.name }} </button>
+                        <button type="button" *ngIf="group.role > 0" class="btn btn-outline-primary col-lg-10"
+                            (click)="openGroup(group.name)"> {{ group.name }} </button>
+                        <button type="button" *ngIf="group.role > 0" class="btn btn-danger col-lg-2"
+                            (click)="deleteGroup(group.name)">-</button>
+                    </div>
+
+                    <h4>Current group</h4>{{selectedGroupName}}
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Channels Column -->
+        <div style="padding:0px">
+            <div class="card mb-3">
+                <h3 class="card-header">Channels</h3>
+                <div class="card-body" style="height: 300px; overflow-y:hidden">
+                    <br />
+                    <form *ngIf="isAdmin || isGroup || isChatAdmin" nz-form [nzLayout]="'inline'"
+                        [formGroup]="channelsForm" (ngSubmit)="submitchannels()">
+                        <nz-form-item>
+                            <nz-form-control nzErrorTip="Please input your New Group!">
+                                <nz-input-group nzPrefixIcon="user">
+                                    <input formControlName="newchanname" nz-input placeholder="New Channels" />
+                                </nz-input-group>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                        <nz-form-item>
+                            <nz-form-control>
+                                <button nz-button nzType="primary">Create</button>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </form>
+
+                    <!-- List of Channels -->
+                    <app-channels [channels]=channels [group]=selectedGroup
+                        (channelChanged)="channelChangedHandler($event)"></app-channels>
+
+                    <h4>Current channel</h4>{{selectedChannelName}}
+                    <br>
+                    <h2>All users</h2>
+
+                    <!-- List of Groups -->
+                    <span *ngFor="let user of listOfData">
+                            {{user.username}}
+                            <button type="button" class="btn btn-danger col-lg-2"
+                                (click)="addmember(user.username)">+</button>
+                    </span>
+
+                </div>
+            </div>
+        </div>
+
+
+        <h4>Members in the current channel</h4>
+        <!-- Members Column -->
+        <div style="padding:0px;">
+            <h3 style="text-align:center; width:100%">Users</h3>
+            <ng-container *ngIf="selectedChannel != null">
+                <p *ngFor="let member of selectedChannel.members">
+                    {{ member }}
+
+                    <button type="button" class="btn btn-danger col-lg-2" (click)="delmember(member)">-</button>
+                </p>
+            </ng-container>
+        </div>
+
+
+        <h4>Chat room</h4>
+        <!-- Chat Column -->
+        <div style="padding:0px">
+            <app-chat [channel]=selectedChannel></app-chat>
+        </div>
+
+    </div>
+
+</div>

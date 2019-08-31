@@ -1,0 +1,29 @@
+<div nz-row>
+    <div nz-col nzSpan="4" nzOffset="10">
+        <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
+            <div style="text-align: center">Login Form</div>
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Please enter username!">
+                    <nz-input-group nzPrefixIcon="user">
+                        <input type="text" nz-input formControlName="username" placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Please enter password!">
+                    <nz-input-group nzPrefixIcon="lock">
+                        <input type="password" nz-input formControlName="password" placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <h4>Password is john</h4>
+            <nz-form-item class="btn-foot">
+                <nz-form-control>
+                    <button nz-button class="login-form-button" [nzType]="'primary'">Login</button>
+
+                    <a routerLink="/reg">Register</a>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </div>
+</div>
